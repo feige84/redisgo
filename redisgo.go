@@ -263,7 +263,9 @@ func (rc *RedisInfo) SetBytes(name string, data interface{}, life int64) error {
 
 //发送订阅，返回接收到的数量
 func (rc *RedisInfo) Publish(channel, message string) int64 {
-	reply, _ := redis.Int64(rc.do("PUBLISH", channel, message))
+	c := rc.p.Get()
+	defer c.Close()
+	reply, _ := redis.Int64(c.Do("PUBLISH", channel, message))
 	return reply
 }
 
