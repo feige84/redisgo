@@ -277,7 +277,7 @@ func (rc *RedisInfo) Time() int64 {
 	if len(timestamp) > 0 {
 		return timestamp[0]
 	}
-	return 0
+	return time.Now().Unix()
 }
 
 func (rc *RedisInfo) Scan(start, pattern string) ([]interface{}, error) {

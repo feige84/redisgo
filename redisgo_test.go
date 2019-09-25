@@ -10,5 +10,8 @@ func TestExecute(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(redisGo.Get("user_count_2772"))
+	for i := 0; i < 20; i++ {
+
+		fmt.Println(redisGo.Time())
+	}
 }
