@@ -356,7 +356,7 @@ func (rc *RedisInfo) DelKeys(pattern string) error {
 	return nil
 }
 
-func (rc *RedisInfo) LPush(key, content string) int64 {
+func (rc *RedisInfo) LPush(key, content interface{}) int64 {
 	num, _ := redis.Int64(rc.do("LPUSH", key, content))
 	return num
 }
@@ -369,7 +369,7 @@ func (rc *RedisInfo) LPop(key string) (interface{}, error) {
 	}
 }
 
-func (rc *RedisInfo) RPush(key, content string) int64 {
+func (rc *RedisInfo) RPush(key, content interface{}) int64 {
 	num, _ := redis.Int64(rc.do("RPUSH", key, content))
 	return num
 }
