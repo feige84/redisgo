@@ -369,6 +369,19 @@ func (rc *RedisInfo) LPop(key string) (interface{}, error) {
 	}
 }
 
+func (rc *RedisInfo) RPush(key, content string) int64 {
+	num, _ := redis.Int64(rc.do("RPUSH", key, content))
+	return num
+}
+
+func (rc *RedisInfo) RPop(key string) (interface{}, error) {
+	if reply, err := rc.do("RPOP", key); err != nil {
+		return nil, err
+	} else {
+		return reply, nil
+	}
+}
+
 func (rc *RedisInfo) HMGet(key, subKey1, subKey2 string) ([]interface{}, error) {
 	return redis.Values(rc.do("HMGET", key, subKey1, subKey2))
 }
