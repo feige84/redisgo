@@ -356,6 +356,11 @@ func (rc *RedisInfo) DelKeys(pattern string) error {
 	return nil
 }
 
+func (rc *RedisInfo) LLEN(key string) int64 {
+	num, _ := redis.Int64(rc.do("LLEN", key))
+	return num
+}
+
 func (rc *RedisInfo) LPush(key, content interface{}) int64 {
 	num, _ := redis.Int64(rc.do("LPUSH", key, content))
 	return num
@@ -448,7 +453,13 @@ func (rc *RedisInfo) Decr(key string) error {
 func (rc *RedisInfo) SAdd(key string, s ...interface{}) (int64, error) {
 	return redis.Int64(rc.do("SADD", redis.Args{}.Add(key).AddFlat(s)...))
 }
-
+func (rc *RedisInfo) SPop(key string) (interface{}, error) {
+	if reply, err := rc.do("SPOP", key); err != nil {
+		return nil, err
+	} else {
+		return reply, nil
+	}
+}
 func (rc *RedisInfo) SRem(key string, s ...interface{}) (int64, error) {
 	return redis.Int64(rc.do("SREM", redis.Args{}.Add(key).AddFlat(s)...))
 }

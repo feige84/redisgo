@@ -10,5 +10,5 @@ func TestExecute(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(redisGo.Exists("xxx"))
+	fmt.Println(redisGo.SPop("list"))
 }
