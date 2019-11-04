@@ -361,8 +361,8 @@ func (rc *RedisInfo) LLEN(key string) int64 {
 	return num
 }
 
-func (rc *RedisInfo) LPush(key, content interface{}) int64 {
-	num, _ := redis.Int64(rc.do("LPUSH", key, content))
+func (rc *RedisInfo) LPush(key string, content ...interface{}) int64 {
+	num, _ := redis.Int64(rc.do("LPUSH", redis.Args{}.Add(key).AddFlat(content)...))
 	return num
 }
 
@@ -374,8 +374,8 @@ func (rc *RedisInfo) LPop(key string) (interface{}, error) {
 	}
 }
 
-func (rc *RedisInfo) RPush(key, content interface{}) int64 {
-	num, _ := redis.Int64(rc.do("RPUSH", key, content))
+func (rc *RedisInfo) RPush(key string, content ...interface{}) int64 {
+	num, _ := redis.Int64(rc.do("RPUSH", redis.Args{}.Add(key).AddFlat(content)...))
 	return num
 }
 
