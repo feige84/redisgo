@@ -440,13 +440,24 @@ func (rc *RedisInfo) Exists(key string) bool {
 }
 
 func (rc *RedisInfo) Incr(key string) error {
-	_, err := redis.Bool(rc.do("INCRBY", key, 1))
+	_, err := redis.Bool(rc.do("INCR", key))
 	return err
 }
 
 // Decr decrease counter in redis.
 func (rc *RedisInfo) Decr(key string) error {
-	_, err := redis.Bool(rc.do("INCRBY", key, -1))
+	_, err := redis.Bool(rc.do("DECR", key))
+	return err
+}
+
+func (rc *RedisInfo) Incrby(key string, val int) error {
+	_, err := redis.Bool(rc.do("INCRBY", key, val))
+	return err
+}
+
+// Decr decrease counter in redis.
+func (rc *RedisInfo) Decrby(key string, val int) error {
+	_, err := redis.Bool(rc.do("DECRBY", key, val))
 	return err
 }
 
