@@ -443,15 +443,22 @@ func (rc *RedisInfo) Exists(key string) bool {
 	return v
 }
 
-func (rc *RedisInfo) Incr(key string) error {
-	_, err := redis.Bool(rc.do("INCRBY", key, 1))
-	return err
+func (rc *RedisInfo) Incr(key string) (int64, error) {
+	return redis.Int64(rc.do("INCR", key))
 }
 
 // Decr decrease counter in redis.
-func (rc *RedisInfo) Decr(key string) error {
-	_, err := redis.Bool(rc.do("INCRBY", key, -1))
-	return err
+func (rc *RedisInfo) Decr(key string) (int64, error) {
+	return redis.Int64(rc.do("DECR", key))
+}
+
+func (rc *RedisInfo) Incrby(key string, val int) (int64, error) {
+	return redis.Int64(rc.do("INCRBY", key, val))
+}
+
+// Decr decrease counter in redis.
+func (rc *RedisInfo) Decrby(key string, val int) (int64, error) {
+	return redis.Int64(rc.do("DECRBY", key, val))
 }
 
 func (rc *RedisInfo) SAdd(key string, s ...interface{}) (int64, error) {
