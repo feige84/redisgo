@@ -361,6 +361,10 @@ func (rc *RedisInfo) LLEN(key string) int64 {
 	return num
 }
 
+func (rc *RedisInfo) LRange(key string, start, end int) ([]interface{}, error) {
+	return redis.Values(rc.do("LRANGE", key, start, end))
+}
+
 func (rc *RedisInfo) LPush(key string, content ...interface{}) int64 {
 	num, _ := redis.Int64(rc.do("LPUSH", redis.Args{}.Add(key).AddFlat(content)...))
 	return num
