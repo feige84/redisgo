@@ -203,7 +203,7 @@ func (rc *RedisInfo) Set(name string, data interface{}, life int64) {
 		_, err = rc.do("SET", name, string(jsonData))
 	}
 	if err != nil {
-		panic(err.Error())
+		panic(err)
 	}
 }
 */
@@ -251,7 +251,7 @@ func (rc *RedisInfo) SetBytes(name string, data interface{}, life int64) error {
 	enc := gob.NewEncoder(&buf)
 	err = enc.Encode(data)
 	if err != nil {
-		panic(err.Error())
+		panic(err)
 	}
 	if life > 0 {
 		_, err = rc.do("SETEX", name, life, buf.Bytes())
@@ -311,7 +311,7 @@ func (rc *RedisInfo) Keys(pattern string) ([]string, error) {
 			reply, err = redis.Values(c.Do("SCAN", start))
 		}
 		if err != nil {
-			panic(err.Error())
+			panic(err)
 		}
 		if len(reply) > 0 {
 			start, _ = strconv.Atoi(string(reply[0].([]byte)))
@@ -391,34 +391,42 @@ func (rc *RedisInfo) RPop(key string) (interface{}, error) {
 	}
 }
 
+func (rc *RedisInfo) HGet(key, field string) ([]interface{}, error) {
+	return redis.Values(rc.do("HGET", key, field))
+}
+
+func (rc *RedisInfo) HSet(key string, field, value interface{}) (int64, error) {
+	return redis.Int64(rc.do("HSET", key, field, value))
+}
+
 func (rc *RedisInfo) HMGet(key, subKey1, subKey2 string) ([]interface{}, error) {
 	return redis.Values(rc.do("HMGET", key, subKey1, subKey2))
 }
 
-func (rc *RedisInfo) HMGetAll(key string) map[string]interface{} {
+func (rc *RedisInfo) HMGetAll(key string) (map[string]interface{}, error) {
 	result := make(map[string]interface{})
 	keys, err := redis.Values(rc.do("HKEYS", key))
 	if err != nil {
 		if err == redis.ErrNil {
-			return nil
+			return nil, nil
 		} else {
-			panic(err.Error())
+			return nil, err
 		}
 	}
 	values, err := redis.Values(rc.do("HVALS", key))
 	if err != nil {
 		if err == redis.ErrNil {
-			return nil
+			return nil, nil
 		} else {
-			panic(err.Error())
+			return nil, err
 		}
 	}
 	for i, v := range keys {
-		if _, exists := values[i].([]byte); exists {
-			result[string(v.([]byte))] = string(values[i].([]byte))
+		if val, exists := values[i].([]byte); exists {
+			result[string(v.([]byte))] = val
 		}
 	}
-	return result
+	return result, nil
 }
 
 func (rc *RedisInfo) HMSet(key string, s ...interface{}) error {
