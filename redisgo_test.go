@@ -22,7 +22,7 @@ func TestExecute(t *testing.T) {
 		panic(err)
 	}
 
-	aa, err := redisGo.HMGetAll("user_aweme_queue")
+	aa, err := redisGo.HDel("user_aweme_queue", 2222222)
 	//queue := DyAwemeQueue{
 	//	QId:       222222,
 	//	QStatus:   0,
@@ -42,7 +42,7 @@ func TestExecute(t *testing.T) {
 		panic(err)
 	}
 	fmt.Println(aa)
-	for _, a := range aa {
-		fmt.Println(string(a.([]byte)))
-	}
+	//for _, a := range aa {
+	//	fmt.Println(string(a.([]byte)))
+	//}
 }

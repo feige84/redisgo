@@ -399,6 +399,10 @@ func (rc *RedisInfo) HSet(key string, field, value interface{}) (int64, error) {
 	return redis.Int64(rc.do("HSET", key, field, value))
 }
 
+func (rc *RedisInfo) HDel(key string, field interface{}) (int64, error) {
+	return redis.Int64(rc.do("HDEL", key, field))
+}
+
 func (rc *RedisInfo) HMGet(key, subKey1, subKey2 string) ([]interface{}, error) {
 	return redis.Values(rc.do("HMGET", key, subKey1, subKey2))
 }
