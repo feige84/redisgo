@@ -1,6 +1,7 @@
 package redisgo
 
 import (
+	"douyin/dy"
 	"fmt"
 	"testing"
 )
@@ -17,14 +18,14 @@ type DyAwemeQueue struct {
 }
 
 func TestExecute(t *testing.T) {
-	redisGo, err := NewRedisGo(`{"prefix":"dds_update","conn":"127.0.0.1","dbNum":"11","password":"","maxIdle":"0", "maxActive":"", "idleTimeout":"0"}`)
+	redisGo, err := NewRedisGo(`{"prefix":"doudashi","conn":"127.0.0.1","dbNum":"11","password":"","maxIdle":"0", "maxActive":"", "idleTimeout":"0"}`)
 	if err != nil {
 		panic(err)
 	}
 
-	aa, err := redisGo.HDel("user_aweme_queue", 2222222)
+	aa, err := redisGo.HDel(dy.UserAwemeQueue, 2222222)
 	//queue := DyAwemeQueue{
-	//	QId:       222222,
+	//	QId:       111111,
 	//	QStatus:   0,
 	//	QDateline: 0,
 	//	QRunTime:  0,
@@ -37,7 +38,8 @@ func TestExecute(t *testing.T) {
 	//if err != nil {
 	//	panic(err)
 	//}
-	//aa, err := redisGo.HSet("user_aweme_queue", "2222222", string(jsonData))
+	//aa, err := redisGo.HSet("user_aweme_queue", "22222", string(jsonData))
+	//aa, err := redisGo.HMGetAll("user_aweme_queue")
 	if err != nil {
 		panic(err)
 	}

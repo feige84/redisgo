@@ -425,9 +425,11 @@ func (rc *RedisInfo) HMGetAll(key string) (map[string]interface{}, error) {
 			return nil, err
 		}
 	}
-	for i, v := range keys {
-		if val, exists := values[i].([]byte); exists {
-			result[string(v.([]byte))] = val
+	for i, k := range keys {
+		if values[i] != nil {
+			if val, exists := values[i].([]byte); exists {
+				result[string(k.([]byte))] = val
+			}
 		}
 	}
 	return result, nil
