@@ -22,7 +22,7 @@ func TestExecute(t *testing.T) {
 		panic(err)
 	}
 
-	aa, err := redisGo.HGetAll("user_aweme_queue_hash")
+	aa, err := redisGo.HGet("user_queue_hash", 2199285)
 	//queue := DyAwemeQueue{
 	//	QId:       111111,
 	//	QStatus:   0,

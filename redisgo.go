@@ -391,8 +391,8 @@ func (rc *RedisInfo) RPop(key string) (interface{}, error) {
 	}
 }
 
-func (rc *RedisInfo) HGet(key, field string) ([]interface{}, error) {
-	return redis.Values(rc.do("HGET", key, field))
+func (rc *RedisInfo) HGet(key string, field interface{}) (interface{}, error) {
+	return rc.do("HGET", key, field)
 }
 
 func (rc *RedisInfo) HSet(key string, field, value interface{}) (int64, error) {
@@ -403,7 +403,7 @@ func (rc *RedisInfo) HDel(key string, field interface{}) (int64, error) {
 	return redis.Int64(rc.do("HDEL", key, field))
 }
 
-func (rc *RedisInfo) HMGet(key, subKey1, subKey2 string) ([]interface{}, error) {
+func (rc *RedisInfo) HMGet(key string, subKey1, subKey2 interface{}) ([]interface{}, error) {
 	return redis.Values(rc.do("HMGET", key, subKey1, subKey2))
 }
 
