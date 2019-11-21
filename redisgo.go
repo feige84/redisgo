@@ -362,7 +362,7 @@ func (rc *RedisInfo) LLEN(key string) int64 {
 }
 
 func (rc *RedisInfo) LRange(key string, start, end int) ([]interface{}, error) {
-	return redis.Values(rc.do("LRANGE", key, start, end))
+	return redis.Values(rc.do("LRANGE", redis.Args{}.Add(key).AddFlat(start).AddFlat(end)...))
 }
 
 func (rc *RedisInfo) LPush(key string, content ...interface{}) int64 {
@@ -392,19 +392,19 @@ func (rc *RedisInfo) RPop(key string) (interface{}, error) {
 }
 
 func (rc *RedisInfo) HGet(key string, field interface{}) (interface{}, error) {
-	return rc.do("HGET", key, field)
+	return rc.do("HGET", redis.Args{}.Add(key).AddFlat(field)...)
 }
 
 func (rc *RedisInfo) HSet(key string, field, value interface{}) (int64, error) {
-	return redis.Int64(rc.do("HSET", key, field, value))
+	return redis.Int64(rc.do("HSET", redis.Args{}.Add(key).AddFlat(field).AddFlat(value)...))
 }
 
 func (rc *RedisInfo) HDel(key string, field interface{}) (int64, error) {
-	return redis.Int64(rc.do("HDEL", key, field))
+	return redis.Int64(rc.do("HDEL", redis.Args{}.Add(key).AddFlat(field)...))
 }
 
 func (rc *RedisInfo) HMGet(key string, subKey1, subKey2 interface{}) ([]interface{}, error) {
-	return redis.Values(rc.do("HMGET", key, subKey1, subKey2))
+	return redis.Values(rc.do("HMGET", redis.Args{}.Add(key).AddFlat(subKey1).AddFlat(subKey2)...))
 }
 
 func (rc *RedisInfo) HMGetAll(key string) (map[string]interface{}, error) {
