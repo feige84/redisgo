@@ -435,6 +435,18 @@ func (rc *RedisInfo) HMGetAll(key string) (map[string]interface{}, error) {
 	return result, nil
 }
 
+func (rc *RedisInfo) HGetAll(key string) (map[string]string, error) {
+	reply, err := redis.StringMap(rc.do("HGETALL", key))
+	if err != nil {
+		if err == redis.ErrNil {
+			return nil, nil
+		} else {
+			return nil, err
+		}
+	}
+	return reply, nil
+}
+
 func (rc *RedisInfo) HMSet(key string, s ...interface{}) error {
 	if _, err := rc.do("HMSET", redis.Args{}.Add(key).AddFlat(s)...); err != nil {
 		return err

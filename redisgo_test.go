@@ -1,7 +1,6 @@
 package redisgo
 
 import (
-	"douyin/dy"
 	"fmt"
 	"testing"
 )
@@ -23,7 +22,7 @@ func TestExecute(t *testing.T) {
 		panic(err)
 	}
 
-	aa, err := redisGo.HDel(dy.UserAwemeQueue, 2222222)
+	aa, err := redisGo.HGetAll("user_aweme_queue_hash")
 	//queue := DyAwemeQueue{
 	//	QId:       111111,
 	//	QStatus:   0,
