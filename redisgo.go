@@ -166,13 +166,13 @@ func (rc *RedisInfo) DbSize() int64 {
 	return num
 }
 
-func (rc *RedisInfo) Type(name string) string {
-	resultData, _ := redis.String(rc.do("TYPE", name))
+func (rc *RedisInfo) Type(key string) string {
+	resultData, _ := redis.String(rc.do("TYPE", redis.Args{}.Add(key)...))
 	return resultData
 }
 
-func (rc *RedisInfo) Get(name string) string {
-	resultData, _ := redis.String(rc.do("GET", name))
+func (rc *RedisInfo) Get(key string) string {
+	resultData, _ := redis.String(rc.do("GET", redis.Args{}.Add(key)...))
 	return resultData
 }
 
@@ -190,38 +190,22 @@ func (rc *RedisInfo) MGet(keys []string) []interface{} {
 	return values
 }
 
-/*
-func (rc *RedisInfo) Set(name string, data interface{}, life int64) {
-	jsonData, jsonErr := json.Marshal(data)
-	if jsonErr != nil {
-		panic(jsonErr.Error())
-	}
-	var err error
-	if life > 0 {
-		_, err = rc.do("SETEX", name, life, string(jsonData))
-	} else {
-		_, err = rc.do("SET", name, string(jsonData))
-	}
-	if err != nil {
-		panic(err)
-	}
-}
-*/
-
 //存储前先做好数据转存吧，比如json或者xml
-func (rc *RedisInfo) Set(name, data string, life int64) error {
+func (rc *RedisInfo) Set(key, data interface{}, life int64) error {
 	var err error
+	var aa interface{}
 	if life > 0 {
-		_, err = rc.do("SETEX", name, life, data)
+		aa, err = rc.do("SETEX", redis.Args{}.Add(key).AddFlat(life).AddFlat(data)...)
 	} else {
-		_, err = rc.do("SET", name, data)
+		aa, err = rc.do("SET", redis.Args{}.Add(key).AddFlat(data)...)
 	}
+	fmt.Println(aa)
 	return err
 }
 
 //go的gob专用，体积小。
-func (rc *RedisInfo) GetBytes(name string, rs interface{}) bool {
-	resultData, err := rc.do("GET", name)
+func (rc *RedisInfo) GetBytes(key string, rs interface{}) bool {
+	resultData, err := rc.do("GET", redis.Args{}.Add(key)...)
 	if err != nil {
 		return false
 	}
@@ -270,7 +254,7 @@ func (rc *RedisInfo) Publish(channel, message string) int64 {
 }
 
 func (rc *RedisInfo) Ttl(key string) int64 {
-	ttl, _ := redis.Int64(rc.do("TTL", key))
+	ttl, _ := redis.Int64(rc.do("TTL", redis.Args{}.Add(key)...))
 	return ttl
 }
 
@@ -331,8 +315,8 @@ func (rc *RedisInfo) Keys(pattern string) ([]string, error) {
 }
 
 //OK
-func (rc *RedisInfo) Del(name string) error {
-	_, err := rc.do("DEL", name)
+func (rc *RedisInfo) Del(key string) error {
+	_, err := rc.do("DEL", redis.Args{}.Add(key)...)
 	return err
 }
 
@@ -357,7 +341,7 @@ func (rc *RedisInfo) DelKeys(pattern string) error {
 }
 
 func (rc *RedisInfo) LLEN(key string) int64 {
-	num, _ := redis.Int64(rc.do("LLEN", key))
+	num, _ := redis.Int64(rc.do("LLEN", redis.Args{}.Add(key)...))
 	return num
 }
 
@@ -371,7 +355,7 @@ func (rc *RedisInfo) LPush(key string, content ...interface{}) int64 {
 }
 
 func (rc *RedisInfo) LPop(key string) (interface{}, error) {
-	if reply, err := rc.do("LPOP", key); err != nil {
+	if reply, err := rc.do("LPOP", redis.Args{}.Add(key)...); err != nil {
 		return nil, err
 	} else {
 		return reply, nil
@@ -384,7 +368,7 @@ func (rc *RedisInfo) RPush(key string, content ...interface{}) int64 {
 }
 
 func (rc *RedisInfo) RPop(key string) (interface{}, error) {
-	if reply, err := rc.do("RPOP", key); err != nil {
+	if reply, err := rc.do("RPOP", redis.Args{}.Add(key)...); err != nil {
 		return nil, err
 	} else {
 		return reply, nil
@@ -409,7 +393,7 @@ func (rc *RedisInfo) HMGet(key string, subKey1, subKey2 interface{}) ([]interfac
 
 func (rc *RedisInfo) HMGetAll(key string) (map[string]interface{}, error) {
 	result := make(map[string]interface{})
-	keys, err := redis.Values(rc.do("HKEYS", key))
+	keys, err := redis.Values(rc.do("HKEYS", redis.Args{}.Add(key)...))
 	if err != nil {
 		if err == redis.ErrNil {
 			return nil, nil
@@ -417,7 +401,7 @@ func (rc *RedisInfo) HMGetAll(key string) (map[string]interface{}, error) {
 			return nil, err
 		}
 	}
-	values, err := redis.Values(rc.do("HVALS", key))
+	values, err := redis.Values(rc.do("HVALS", redis.Args{}.Add(key)...))
 	if err != nil {
 		if err == redis.ErrNil {
 			return nil, nil
@@ -436,7 +420,7 @@ func (rc *RedisInfo) HMGetAll(key string) (map[string]interface{}, error) {
 }
 
 func (rc *RedisInfo) HGetAll(key string) (map[string]string, error) {
-	reply, err := redis.StringMap(rc.do("HGETALL", key))
+	reply, err := redis.StringMap(rc.do("HGETALL", redis.Args{}.Add(key)...))
 	if err != nil {
 		if err == redis.ErrNil {
 			return nil, nil
@@ -455,14 +439,14 @@ func (rc *RedisInfo) HMSet(key string, s ...interface{}) error {
 }
 
 func (rc *RedisInfo) Expire(key string, life int64) error {
-	if _, err := rc.do("EXPIRE", key, life); err != nil {
+	if _, err := rc.do("EXPIRE", redis.Args{}.Add(key).AddFlat(life)...); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (rc *RedisInfo) Exists(key string) bool {
-	v, err := redis.Bool(rc.do("EXISTS", key))
+	v, err := redis.Bool(rc.do("EXISTS", redis.Args{}.Add(key)...))
 	if err != nil {
 		return false
 	}
@@ -470,28 +454,28 @@ func (rc *RedisInfo) Exists(key string) bool {
 }
 
 func (rc *RedisInfo) Incr(key string) (int64, error) {
-	return redis.Int64(rc.do("INCR", key))
+	return redis.Int64(rc.do("INCR", redis.Args{}.Add(key)...))
 }
 
 // Decr decrease counter in redis.
 func (rc *RedisInfo) Decr(key string) (int64, error) {
-	return redis.Int64(rc.do("DECR", key))
+	return redis.Int64(rc.do("DECR", redis.Args{}.Add(key)...))
 }
 
 func (rc *RedisInfo) Incrby(key string, val int) (int64, error) {
-	return redis.Int64(rc.do("INCRBY", key, val))
+	return redis.Int64(rc.do("INCRBY", redis.Args{}.Add(key).AddFlat(val)...))
 }
 
 // Decr decrease counter in redis.
 func (rc *RedisInfo) Decrby(key string, val int) (int64, error) {
-	return redis.Int64(rc.do("DECRBY", key, val))
+	return redis.Int64(rc.do("DECRBY", redis.Args{}.Add(key).AddFlat(val)...))
 }
 
 func (rc *RedisInfo) SAdd(key string, s ...interface{}) (int64, error) {
 	return redis.Int64(rc.do("SADD", redis.Args{}.Add(key).AddFlat(s)...))
 }
 func (rc *RedisInfo) SPop(key string) (interface{}, error) {
-	if reply, err := rc.do("SPOP", key); err != nil {
+	if reply, err := rc.do("SPOP", redis.Args{}.Add(key)...); err != nil {
 		return nil, err
 	} else {
 		return reply, nil

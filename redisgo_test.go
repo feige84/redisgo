@@ -22,7 +22,7 @@ func TestExecute(t *testing.T) {
 		panic(err)
 	}
 
-	aa, err := redisGo.HDel("music_aweme_queue_hash", 222222222)
+	aa, err := redisGo.HDel("user_queue_hash", 2367951)
 	//queue := DyAwemeQueue{
 	//	QId:       111111,
 	//	QStatus:   0,
