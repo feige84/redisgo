@@ -3,7 +3,6 @@ package redisgo
 import (
 	"bytes"
 	"encoding/gob"
-	"fmt"
 	"github.com/gomodule/redigo/redis"
 )
 
@@ -15,13 +14,11 @@ func (rc *RedisInfo) Get(key string) string {
 //存储前先做好数据转存吧，比如json或者xml
 func (rc *RedisInfo) Set(key, data interface{}, life int64) error {
 	var err error
-	var aa interface{}
 	if life > 0 {
-		aa, err = rc.do("SETEX", redis.Args{}.Add(key).AddFlat(life).AddFlat(data)...)
+		_, err = rc.do("SETEX", redis.Args{}.Add(key).AddFlat(life).AddFlat(data)...)
 	} else {
-		aa, err = rc.do("SET", redis.Args{}.Add(key).AddFlat(data)...)
+		_, err = rc.do("SET", redis.Args{}.Add(key).AddFlat(data)...)
 	}
-	fmt.Println(aa)
 	return err
 }
 
