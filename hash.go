@@ -14,6 +14,10 @@ func (rc *RedisInfo) HDel(key string, field interface{}) (int64, error) {
 	return redis.Int64(rc.do("HDEL", redis.Args{}.Add(key).AddFlat(field)...))
 }
 
+func (rc *RedisInfo) HIncrBy(key string, field interface{}, increment int64) (int64, error) {
+	return redis.Int64(rc.do("HINCRBY", redis.Args{}.Add(key).AddFlat(field).AddFlat(increment)...))
+}
+
 func (rc *RedisInfo) HMGet(key string, subKey1, subKey2 interface{}) ([]interface{}, error) {
 	return redis.Values(rc.do("HMGET", redis.Args{}.Add(key).AddFlat(subKey1).AddFlat(subKey2)...))
 }
