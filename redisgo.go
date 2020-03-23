@@ -145,6 +145,10 @@ func (rc *RedisInfo) do(commandName string, args ...interface{}) (reply interfac
 	return c.Do(commandName, args...)
 }
 
+func (rc *RedisInfo) Close() error {
+	return rc.p.Close()
+}
+
 // associate with config key.
 func (rc *RedisInfo) joinPrefix(originKey string) string {
 	if rc.key != "" {
