@@ -2,6 +2,13 @@ package redisgo
 
 import "github.com/gomodule/redigo/redis"
 
+func (rc *RedisInfo) HExists(key, field string) bool {
+	v, err := redis.Bool(rc.do("HEXISTS", redis.Args{}.Add(key).AddFlat(field)...))
+	if err != nil {
+		return false
+	}
+	return v
+}
 func (rc *RedisInfo) HGet(key string, field interface{}) (interface{}, error) {
 	return rc.do("HGET", redis.Args{}.Add(key).AddFlat(field)...)
 }
@@ -16,6 +23,14 @@ func (rc *RedisInfo) HDel(key string, field interface{}) (int64, error) {
 
 func (rc *RedisInfo) HIncrBy(key string, field interface{}, increment int64) (int64, error) {
 	return redis.Int64(rc.do("HINCRBY", redis.Args{}.Add(key).AddFlat(field).AddFlat(increment)...))
+}
+
+func (rc *RedisInfo) HIncrByFloat(key string, field interface{}, increment int64) (int64, error) {
+	return redis.Int64(rc.do("HINCRBYFLOAT", redis.Args{}.Add(key).AddFlat(field).AddFlat(increment)...))
+}
+
+func (rc *RedisInfo) HLen(key string) (int64, error) {
+	return redis.Int64(rc.do("HLEN", redis.Args{}.Add(key)...))
 }
 
 func (rc *RedisInfo) HMGet(key string, subKey1, subKey2 interface{}) ([]interface{}, error) {
