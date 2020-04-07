@@ -2,7 +2,7 @@ package redisgo
 
 import "github.com/gomodule/redigo/redis"
 
-func (rc *RedisInfo) HExists(key, field string) bool {
+func (rc *RedisInfo) HExists(key, field interface{}) bool {
 	v, err := redis.Bool(rc.do("HEXISTS", redis.Args{}.Add(key).AddFlat(field)...))
 	if err != nil {
 		return false
