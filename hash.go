@@ -9,6 +9,7 @@ func (rc *RedisInfo) HExists(key, field interface{}) bool {
 	}
 	return v
 }
+
 func (rc *RedisInfo) HGet(key string, field interface{}) (interface{}, error) {
 	return rc.do("HGET", redis.Args{}.Add(key).AddFlat(field)...)
 }
