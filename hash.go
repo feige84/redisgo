@@ -73,8 +73,8 @@ func (rc *RedisInfo) HMGetAll(key string) (map[string]interface{}, error) {
 	return result, nil
 }
 
-func (rc *RedisInfo) HGetAll(key string) (map[string]string, error) {
-	reply, err := redis.StringMap(rc.do("HGETALL", redis.Args{}.Add(key)...))
+func (rc *RedisInfo) HGetAllString(key string) (map[string]string, error) {
+	reply, err := redis.StringMap(rc.HGetAll(key))
 	if err != nil {
 		if err == redis.ErrNil {
 			return nil, nil
@@ -83,4 +83,32 @@ func (rc *RedisInfo) HGetAll(key string) (map[string]string, error) {
 		}
 	}
 	return reply, nil
+}
+
+func (rc *RedisInfo) HGetAllInt(key string) (map[string]int, error) {
+	reply, err := redis.IntMap(rc.HGetAll(key))
+	if err != nil {
+		if err == redis.ErrNil {
+			return nil, nil
+		} else {
+			return nil, err
+		}
+	}
+	return reply, nil
+}
+
+func (rc *RedisInfo) HGetAllInt64(key string) (map[string]int64, error) {
+	reply, err := redis.Int64Map(rc.HGetAll(key))
+	if err != nil {
+		if err == redis.ErrNil {
+			return nil, nil
+		} else {
+			return nil, err
+		}
+	}
+	return reply, nil
+}
+
+func (rc *RedisInfo) HGetAll(key string) (interface{}, error) {
+	return rc.do("HGETALL", redis.Args{}.Add(key)...)
 }
